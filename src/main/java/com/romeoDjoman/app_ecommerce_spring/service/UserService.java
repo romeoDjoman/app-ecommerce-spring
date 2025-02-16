@@ -6,6 +6,10 @@ import com.romeoDjoman.app_ecommerce_spring.entity.User;
 import com.romeoDjoman.app_ecommerce_spring.enums.RoleType;
 import com.romeoDjoman.app_ecommerce_spring.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +17,9 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 
-
 @AllArgsConstructor
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
     private EmailValidationService emailValidationService;
@@ -54,5 +57,12 @@ public class UserService {
         User userActivated = this.userRepository.findById(emailValidation.getUser().getId()).orElseThrow(() -> new RuntimeException("Utilisateur inconnu"));
         userActivated.setActive(true);
         this.userRepository.save(userActivated);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return this.userRepository
+                .findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Aucun utilisateur ne correspond à cet identitifant"));
     }
 }
