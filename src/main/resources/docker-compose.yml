@@ -1,0 +1,21 @@
+services:
+  db:
+    container_name: mariadb-11.4.2-noble
+    image: mariadb:11.4.2-noble
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD:
+    ports:
+      - 3308:3306
+  adminer:
+    container_name: adminer-4.8.1-standalone
+    image: adminer:4.8.1-standalone
+    restart: always
+    ports:
+      - 9080:8080
+  smtp4dev:
+    image: rnwood/smtp4dev:v3
+    restart: always
+    ports:
+      - 9081:80
+      - 9025:25
