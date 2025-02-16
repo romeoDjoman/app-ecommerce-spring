@@ -2,6 +2,7 @@ package com.romeoDjoman.app_ecommerce_spring.controller;
 
 import com.romeoDjoman.app_ecommerce_spring.dto.AuthenticationDTO;
 import com.romeoDjoman.app_ecommerce_spring.entity.User;
+import com.romeoDjoman.app_ecommerce_spring.security.JwtService;
 import com.romeoDjoman.app_ecommerce_spring.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
@@ -24,6 +25,7 @@ public class UserController {
 
     private UserService userService;
     private AuthenticationManager authenticationManager; 
+    private JwtService jwtService;
 
     @PostMapping(path = "signup")
     public void signup(@RequestBody User user) {
@@ -41,7 +43,10 @@ public class UserController {
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authenticationDTO.username(), authenticationDTO.password())
         );
-        log.info("resultat {}", authentication.isAuthenticated());
+
+        if(authentication.isAuthenticated()) {
+            return this.jwtService.generate(authenticationDTO.username());
+        }
         return null;
     }
 }
