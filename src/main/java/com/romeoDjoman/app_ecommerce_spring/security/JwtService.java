@@ -1,7 +1,9 @@
 package com.romeoDjoman.app_ecommerce_spring.security;
 
 
+import com.romeoDjoman.app_ecommerce_spring.entity.Jwt;
 import com.romeoDjoman.app_ecommerce_spring.entity.User;
+import com.romeoDjoman.app_ecommerce_spring.repository.JwtRepository;
 import com.romeoDjoman.app_ecommerce_spring.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -19,12 +21,25 @@ import java.util.function.Function;
 @AllArgsConstructor
 @Service
 public class JwtService {
+    public static final String BEARER = "bearer";
     private final String ENCRYPTION_KEY = "c0c786b5ad1731e3dd6231579815127a727fb3c1e72b75570779cf4abf43f69e";
     private UserService userService;
+    private JwtRepository jwtRepository;
 
     public Map<String, String> generate(String username) {
         User user = (User) this.userService.loadUserByUsername(username);
-        return this.generateJwt(user);
+        Map<String, String> jwtMap = this.generateJwt(user);
+
+        final Jwt jwt = Jwt
+                .builder()
+                .value(jwtMap.get(BEARER))
+                .desactive(false)
+                .expire(false)
+                .user(user)
+                .build();
+        this.jwtRepository.save(jwt);
+
+        return jwtMap;
     }
 
     private Map<String, String> generateJwt(User user) {

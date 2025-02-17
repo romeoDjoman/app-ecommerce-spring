@@ -2,8 +2,6 @@ package com.romeoDjoman.app_ecommerce_spring.entity;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.*;
 import lombok.*;
