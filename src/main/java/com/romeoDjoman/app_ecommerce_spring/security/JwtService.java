@@ -2,6 +2,7 @@ package com.romeoDjoman.app_ecommerce_spring.security;
 
 
 import com.romeoDjoman.app_ecommerce_spring.entity.Jwt;
+import com.romeoDjoman.app_ecommerce_spring.entity.RefreshToken;
 import com.romeoDjoman.app_ecommerce_spring.entity.User;
 import com.romeoDjoman.app_ecommerce_spring.repository.JwtRepository;
 import com.romeoDjoman.app_ecommerce_spring.service.UserService;
@@ -13,7 +14,6 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +22,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 public class JwtService {
     public static final String BEARER = "bearer";
     public static final String TOKEN_INVALIDE = "Token invalide";
+    public static final String REFRESH = "refresh";
     private final String ENCRYPTION_KEY = "c0c786b5ad1731e3dd6231579815127a727fb3c1e72b75570779cf4abf43f69e";
     private UserService userService;
     private JwtRepository jwtRepository;
@@ -49,15 +51,24 @@ public class JwtService {
         this.disableTokens(user);
         final Map<String, String> jwtMap = new java.util.HashMap<>(this.generateJwt(user));
 
+        RefreshToken refreshToken = RefreshToken.builder()
+                .value(UUID.randomUUID().toString())
+                .expire(false)
+                .creation(Instant.now())
+                .expiration(Instant.now().plusMillis(30 * 60 * 1000))
+                .build();
+
         final Jwt jwt = Jwt
                 .builder()
                 .value(jwtMap.get(BEARER))
                 .desactive(false)
                 .expire(false)
                 .user(user)
+                .refreshToken(refreshToken)
                 .build();
-        this.jwtRepository.save(jwt);
 
+        this.jwtRepository.save(jwt);
+        jwtMap.put(REFRESH, refreshToken.getValue());
         return jwtMap;
     }
 
@@ -108,7 +119,7 @@ public class JwtService {
 
     private Map<String, String> generateJwt(User user) {
         final long currentTime = System.currentTimeMillis();
-        final long expirationTime = currentTime + 30 * 60 * 1000;
+        final long expirationTime = currentTime + 60 * 1000;
 
         final Map<String, Object> claims = Map.of(
                 "name", user.getName(),
@@ -146,4 +157,14 @@ public class JwtService {
 //        log.info("Suppression des tokens à {}", Instant.now());
 //        this.jwtRepository.deleteAllByExpireAndDesactive(true, true);
 //    }
+
+    public Map<String, String> refreshToken(Map<String, String> refreshTokenRequest) {
+        final Jwt jwt = this.jwtRepository.findByRefreshToken(refreshTokenRequest.get(REFRESH)).orElseThrow(() -> new RuntimeException(TOKEN_INVALIDE));
+        if(jwt.getRefreshToken().isExpire() || jwt.getRefreshToken().getExpiration().isBefore(Instant.now())) {
+            throw new RuntimeException(TOKEN_INVALIDE);
+        }
+        this.disableTokens(jwt.getUser());
+        return this.generate(jwt.getUser().getEmail());
+    }
+
 }

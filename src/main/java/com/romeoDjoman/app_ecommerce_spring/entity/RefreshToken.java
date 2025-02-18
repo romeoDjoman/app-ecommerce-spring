@@ -3,6 +3,7 @@ package com.romeoDjoman.app_ecommerce_spring.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.Date;
 
 @Setter
@@ -11,21 +12,18 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "jwt")
-public class Jwt {
+@Table(name = "refresh-token")
+public class RefreshToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+
     private String value;
-    private boolean desactive;
     private boolean expire;
+    private Instant creation;
+    private Instant expiration;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private RefreshToken refreshToken;
 
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE})
-    @JoinColumn(name = "user_id")
-    private User user;
 }

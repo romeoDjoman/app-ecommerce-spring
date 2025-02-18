@@ -47,6 +47,8 @@ public class ConfigurationSecurityApplication {
                                         .requestMatchers(POST, "/login").permitAll()
                                         .requestMatchers(POST, "/change-password").permitAll()
                                         .requestMatchers(POST, "/new-password").permitAll()
+                                        .requestMatchers(POST, "/refresh-token").permitAll()
+
                                         .anyRequest().authenticated()
                         )
                         .sessionManagement(httpSecuritySessionManagementConfigurer ->

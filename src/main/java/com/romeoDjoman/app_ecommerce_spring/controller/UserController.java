@@ -35,6 +35,11 @@ public class UserController {
         this.userService.activation(activation);
     }
 
+    @PostMapping(path = "refresh-token")
+    public @ResponseBody Map<String, String> refreshToken(@RequestBody Map<String, String> refreshTokenRequest) {
+        return this.jwtService.refreshToken(refreshTokenRequest);
+    }
+
     @PostMapping(path = "change-password")
     public void changePassword(@RequestBody Map<String, String> activation) {
         this.userService.changePassword(activation);
