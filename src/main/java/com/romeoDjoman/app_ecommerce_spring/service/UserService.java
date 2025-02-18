@@ -6,8 +6,6 @@ import com.romeoDjoman.app_ecommerce_spring.entity.User;
 import com.romeoDjoman.app_ecommerce_spring.enums.RoleType;
 import com.romeoDjoman.app_ecommerce_spring.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -60,9 +58,25 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
         return this.userRepository
                 .findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Aucun utilisateur ne correspond à cet identitifant"));
+    }
+
+    public void changePassword(Map<String, String> parameters) {
+        User user = this.loadUserByUsername(parameters.get("email"));
+        this.emailValidationService.save(user);
+    }
+
+    public void newPassword(Map<String, String> parameters) {
+        User user = this.loadUserByUsername(parameters.get("email"));
+        final EmailValidation emailValidation = emailValidationService.readTheCode(parameters.get("code"));
+        if(emailValidation.getUser().getEmail().equals(user.getEmail())) {
+            String mdpCrypte = this.passwordEncoder.encode(parameters.get("password"));
+            user.setPwd(mdpCrypte);
+            this.userRepository.save(user);
+        }
+
     }
 }

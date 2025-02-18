@@ -3,6 +3,7 @@ package com.romeoDjoman.app_ecommerce_spring.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Setter
 @Getter
 @Builder
 @NoArgsConstructor

@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
 
@@ -44,6 +45,8 @@ public class ConfigurationSecurityApplication {
                                         .requestMatchers(POST, "/signup").permitAll()
                                         .requestMatchers(POST, "/activation").permitAll()
                                         .requestMatchers(POST, "/login").permitAll()
+                                        .requestMatchers(POST, "/change-password").permitAll()
+                                        .requestMatchers(POST, "/new-password").permitAll()
                                         .anyRequest().authenticated()
                         )
                         .sessionManagement(httpSecuritySessionManagementConfigurer ->
