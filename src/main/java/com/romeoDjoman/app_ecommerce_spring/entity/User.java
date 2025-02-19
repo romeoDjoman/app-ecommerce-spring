@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+@Builder
 @Entity
 @Getter
 @Setter
@@ -33,7 +34,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_"+this.role.getLabel()));
+        return this.role.getLabel().getAuthorities();
     }
 
     @Override

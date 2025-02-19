@@ -8,6 +8,8 @@ import com.romeoDjoman.app_ecommerce_spring.service.ReviewsService;
 
 import lombok.AllArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @RequestMapping("reviews")
 @RestController
@@ -19,4 +21,6 @@ public class ReviewsController {
     public void create(@RequestBody Reviews reviews) {
         this.reviewsService.create(reviews);
     }
+
+
 }

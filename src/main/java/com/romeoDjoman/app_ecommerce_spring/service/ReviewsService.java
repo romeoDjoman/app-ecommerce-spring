@@ -8,6 +8,7 @@ import com.romeoDjoman.app_ecommerce_spring.entity.Reviews;
 import com.romeoDjoman.app_ecommerce_spring.repository.ReviewsRepository;
 
 import lombok.AllArgsConstructor;
+import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -22,4 +23,7 @@ public class ReviewsService {
     }
 
 
+    public List<Reviews> list() {
+        return (List<Reviews>) this.reviewsRepository.findAll();
+    }
 }

@@ -64,7 +64,7 @@ public class EmailValidationService {
         return this.emailValidationRepository.findByCode(code).orElseThrow(() -> new RuntimeException("Votre code est invalide"));
     }
 
-    @Scheduled(cron = "*/30 * * * * *")
+    @Scheduled(cron = "0 0 * * * *") // Chaque heure
     public void cleanTable() {
         final Instant now = Instant.now();
         log.info("Suppression des token à {}", now);

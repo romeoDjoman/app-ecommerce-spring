@@ -5,6 +5,7 @@ import com.romeoDjoman.app_ecommerce_spring.enums.RoleType;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Builder
 @Entity
 @Getter
 @Setter
