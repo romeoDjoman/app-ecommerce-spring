@@ -25,7 +25,7 @@ public class User implements UserDetails {
     private String firstName;
     private String lastName;
     private String pwd;
-    private String email; // Mettre email unique
+    private String email; // Rappel à Mettre email unique
     private String photo;
     private boolean active = false;
 

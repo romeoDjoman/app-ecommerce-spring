@@ -17,7 +17,8 @@ import java.util.Map;
 @Slf4j
 @AllArgsConstructor
 @RestController
-@RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping
+@CrossOrigin(origins = "http://localhost:4200")
 public class AccountController {
 
     private UserService userService;
