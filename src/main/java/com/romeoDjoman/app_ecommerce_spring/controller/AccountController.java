@@ -1,11 +1,14 @@
 package com.romeoDjoman.app_ecommerce_spring.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.romeoDjoman.app_ecommerce_spring.dto.AuthenticationDTO;
+import com.romeoDjoman.app_ecommerce_spring.dto.AuthenticationResponseDTO;
 import com.romeoDjoman.app_ecommerce_spring.entity.User;
 import com.romeoDjoman.app_ecommerce_spring.security.JwtService;
 import com.romeoDjoman.app_ecommerce_spring.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -52,13 +55,25 @@ public class AccountController {
     }
 
     @PostMapping(path = "login")
-    public  Map<String, String> login(@RequestBody AuthenticationDTO authenticationDTO) {
+    public ResponseEntity<AuthenticationResponseDTO> login(@RequestBody AuthenticationDTO authenticationDTO) {
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authenticationDTO.username(), authenticationDTO.password())
         );
 
         if(authentication.isAuthenticated()) {
-            return this.jwtService.generate(authenticationDTO.username());
+            Map<String, String> tokens = this.jwtService.generate(authenticationDTO.username());
+            User user = (User) authentication.getPrincipal();
+            AuthenticationResponseDTO authenticationResponseDTO = AuthenticationResponseDTO.builder()
+                    .bearer(tokens.get(JwtService.BEARER))
+                    .refresh(tokens.get(JwtService.REFRESH))
+                    .user(user)
+                    .build();
+            try {
+                tokens.put("user", new ObjectMapper().writeValueAsString(user));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            return ResponseEntity.status(200).body(authenticationResponseDTO);
         }
         return null;
     }

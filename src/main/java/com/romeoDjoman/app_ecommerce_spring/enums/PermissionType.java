@@ -3,6 +3,7 @@ package com.romeoDjoman.app_ecommerce_spring.enums;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public enum PermissionType {
     ADMIN_CREATE,
@@ -24,6 +25,5 @@ public enum PermissionType {
 
     USER_CREATE_REVIEWS;
 
-    @Getter
     private String label;
 }

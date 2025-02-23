@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import static com.romeoDjoman.app_ecommerce_spring.enums.PermissionType.*;
 
+@Getter
 @AllArgsConstructor
 public enum RoleType {
     USER(
@@ -44,8 +45,7 @@ public enum RoleType {
         )
     );
 
-    @Getter
-    Set<PermissionType> permissions;
+    final Set<PermissionType> permissions;
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         final List<SimpleGrantedAuthority> grantedAuthorities = this.getPermissions().stream().map(

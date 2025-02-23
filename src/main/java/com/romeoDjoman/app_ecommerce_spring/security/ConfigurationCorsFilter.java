@@ -57,11 +57,11 @@ public class ConfigurationCorsFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
-        log.info("Initializing SimpleCorsFilter");
+        log.info("Initializing ConfigurationCorsFilter");
     }
 
     @Override
     public void destroy() {
-        log.info("Destroying SimpleCorsFilter");
+        log.info("Destroying ConfigurationCorsFilter");
     }
 }

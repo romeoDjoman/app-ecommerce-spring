@@ -1,6 +1,8 @@
 package com.romeoDjoman.app_ecommerce_spring.security;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.romeoDjoman.app_ecommerce_spring.entity.Jwt;
 import com.romeoDjoman.app_ecommerce_spring.entity.RefreshToken;
 import com.romeoDjoman.app_ecommerce_spring.entity.User;
@@ -34,6 +36,7 @@ public class JwtService {
     public static final String BEARER = "bearer";
     public static final String TOKEN_INVALIDE = "Token invalide";
     public static final String REFRESH = "refresh";
+    public static final String USER = "user";
     private final String ENCRYPTION_KEY = "c0c786b5ad1731e3dd6231579815127a727fb3c1e72b75570779cf4abf43f69e";
     private UserService userService;
     private JwtRepository jwtRepository;
@@ -69,6 +72,11 @@ public class JwtService {
 
         this.jwtRepository.save(jwt);
         jwtMap.put(REFRESH, refreshToken.getValue());
+        try {
+            jwtMap.put(USER, new ObjectMapper().writeValueAsString(user));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         return jwtMap;
     }
 
@@ -121,8 +129,16 @@ public class JwtService {
         final long currentTime = System.currentTimeMillis();
         final long expirationTime = currentTime + 30 * 60 * 1000;
 
+        // Récupérer le nom du rôle
+        String roleName = String.valueOf(user.getRole().getLabel());
+
+        // Afficher le nom du rôle dans la console
+        System.out.println("Nom du rôle : " + roleName);
+        System.out.println("Rôle de l'utilisateur : " + user.getRole().getLabel());
+
         final Map<String, Object> claims = Map.of(
                 "name", user.getName(),
+                "role", user.getRole().getLabel(),
                 Claims.EXPIRATION, new Date(expirationTime),
                 Claims.SUBJECT, user.getEmail()
 
