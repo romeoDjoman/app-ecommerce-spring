@@ -13,6 +13,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
 public class PublicationService {
@@ -25,7 +28,7 @@ public class PublicationService {
     public PublicationDTO createPublication(PublicationDTO publicationDTO) {
         Publication publication = publicationMapper.toEntity(publicationDTO);
 
-        // Gestion spécifique pour l'article avec association au Journal
+
         if (publication instanceof Article && publicationDTO instanceof ArticleDTO articleDTO) {
             if (articleDTO.getJournalId() != null) {
                 Journal journal = journalRepository.findById(articleDTO.getJournalId())
@@ -36,5 +39,12 @@ public class PublicationService {
 
         Publication savedPublication = publicationRepository.save(publication);
         return publicationMapper.toDto(savedPublication);
+    }
+
+    public List<PublicationDTO> searchPublicationsByKeyword(String keyword) {
+        List<Publication> publications = publicationRepository.findByTitleContainingOrDescriptionContaining(keyword, keyword);
+        return publications.stream()
+                .map(publicationMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

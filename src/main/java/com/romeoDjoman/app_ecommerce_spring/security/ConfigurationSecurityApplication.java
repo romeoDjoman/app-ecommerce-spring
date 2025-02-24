@@ -46,10 +46,10 @@ public class ConfigurationSecurityApplication implements WebMvcConfigurer {
         LOGGER.info("Configuring security filter chain");
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(OPTIONS, "/**").permitAll()
                         .requestMatchers(POST, "/signup", "/activation", "/login", "/change-password", "/new-password", "/refresh-token", "/reviews").permitAll()
+                        .requestMatchers(GET, "/publications", "/search").permitAll()
                         .requestMatchers(GET, "/reviews").hasAnyAuthority("ROLE_AUTHOR", "ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -57,20 +57,6 @@ public class ConfigurationSecurityApplication implements WebMvcConfigurer {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        LOGGER.info("Setting CORS configuration");
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOriginPatterns(List.of("http://localhost:4200"));
-//        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//        configuration.setAllowedHeaders(List.of("*"));
-//        configuration.setAllowCredentials(true);
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {

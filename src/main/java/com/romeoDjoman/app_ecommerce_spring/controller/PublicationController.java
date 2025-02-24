@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @AllArgsConstructor
 @RestController
@@ -23,6 +24,22 @@ public class PublicationController {
                 .created(URI.create("/publications/" + createdPublication.getId()))
                 .body(createdPublication);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<PublicationDTO>> searchPublicationsByKeyword(@RequestParam String keyword) {
+        List<PublicationDTO> publications = publicationService.searchPublicationsByKeyword(keyword);
+        return ResponseEntity.ok(publications);
+    }
+
+
+
+
+
+
+
+
+
+
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
