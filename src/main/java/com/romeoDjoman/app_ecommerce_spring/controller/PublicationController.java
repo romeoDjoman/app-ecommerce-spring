@@ -1,19 +1,36 @@
 package com.romeoDjoman.app_ecommerce_spring.controller;
 
-import com.romeoDjoman.app_ecommerce_spring.entity.Article;
-import com.romeoDjoman.app_ecommerce_spring.service.ArticleService;
+import com.romeoDjoman.app_ecommerce_spring.dto.PublicationDTO;
+import com.romeoDjoman.app_ecommerce_spring.service.PublicationService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(path = "publication")
+@RequestMapping(path = "publications")
 public class PublicationController {
 
-    private final ArticleService articleService;
+    private final PublicationService publicationService;
 
-    @PostMapping(path = "create-article")
-    public @ResponseBody Article article(@RequestBody Article articleRequest) {
-        return this.articleService.createArticle(articleRequest);
+    @PostMapping
+    public ResponseEntity<PublicationDTO> createPublication(@Valid @RequestBody PublicationDTO publicationDTO) {
+        PublicationDTO createdPublication = publicationService.createPublication(publicationDTO);
+        return ResponseEntity
+                .created(URI.create("/publications/" + createdPublication.getId()))
+                .body(createdPublication);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(jakarta.persistence.EntityNotFoundException.class)
+    public ResponseEntity<String> handleNotFound(jakarta.persistence.EntityNotFoundException ex) {
+        return ResponseEntity.status(404).body(ex.getMessage());
     }
 }

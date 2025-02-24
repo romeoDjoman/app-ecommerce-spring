@@ -2,6 +2,8 @@ package com.romeoDjoman.app_ecommerce_spring.entity;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
@@ -20,6 +22,15 @@ import lombok.Setter;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "publication_type", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "publication")
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "publicationType"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Article.class, name = "Article"),
+        @JsonSubTypes.Type(value = Journal.class, name = "Journal")
+})
 public abstract class Publication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,5 +47,4 @@ public abstract class Publication {
     private Integer pageCount;
     private Boolean available;
     private Double rating;
-
 }

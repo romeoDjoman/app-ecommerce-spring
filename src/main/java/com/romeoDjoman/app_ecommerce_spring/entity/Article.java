@@ -13,7 +13,6 @@ import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Entity
 @Getter
 @Setter
@@ -21,17 +20,17 @@ import lombok.Setter;
 public class Article extends Publication {
     private String authors;
     private String doi;
-    private String keywords;
-    
+    private String keyword;
+
     @Lob
     private byte[] coverImageA;
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
     private List<Figure> figures;
-    
+
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
     private List<Reference> references;
-    
+
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
     private List<TableArticle> tables;
 
@@ -50,6 +49,4 @@ public class Article extends Publication {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User author;
-
-    
 }
