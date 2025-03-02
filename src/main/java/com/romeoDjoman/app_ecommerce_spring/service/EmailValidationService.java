@@ -24,10 +24,10 @@ public class EmailValidationService {
     private EmailNotificationService emailNotificationService;
 
     public void save(User user) {
-        // Vérification si une validation existe déjà pour l'utilisateur
+
         Optional<EmailValidation> existingValidation = emailValidationRepository.findByUser(user);
         if (existingValidation.isPresent()) {
-            // Si une validation existe déjà, vous pouvez soit la mettre à jour soit simplement la supprimer et en créer une nouvelle.
+
             EmailValidation existing = existingValidation.get();
             existing.setCode(generateCode());  // Régénère un code
             existing.setCreation(Instant.now());
@@ -35,7 +35,7 @@ public class EmailValidationService {
             this.emailValidationRepository.save(existing);
             this.emailNotificationService.send(existing);
         } else {
-            // Sinon, créer une nouvelle validation
+
             EmailValidation emailValidation = new EmailValidation();
             emailValidation.setUser(user);
 
@@ -52,7 +52,7 @@ public class EmailValidationService {
         }
     }
 
-    // Méthode utilitaire pour générer un code
+
     private String generateCode() {
         Random random = new Random();
         int randomInteger = random.nextInt(999999);

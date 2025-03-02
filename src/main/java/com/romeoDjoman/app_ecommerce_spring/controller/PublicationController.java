@@ -31,6 +31,39 @@ public class PublicationController {
         return ResponseEntity.ok(publications);
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<List<PublicationDTO>> searchPublicationsByFilters(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice) {
+        List<PublicationDTO> publications = publicationService.searchPublicationsByFilters(category, minPrice, maxPrice);
+        return ResponseEntity.ok(publications);
+    }
+
+    @GetMapping("/latest")
+    public ResponseEntity<List<PublicationDTO>> getLatestPublications() {
+        List<PublicationDTO> publications = publicationService.getLatestPublications();
+        return ResponseEntity.ok(publications);
+    }
+
+    @GetMapping("/top-selling")
+    public ResponseEntity<List<PublicationDTO>> getTopSellingPublications() {
+        List<PublicationDTO> publications = publicationService.getTopSellingPublications();
+        return ResponseEntity.ok(publications);
+    }
+
+    @GetMapping("/top-rated")
+    public ResponseEntity<List<PublicationDTO>> getTopRatedPublications() {
+        List<PublicationDTO> publications = publicationService.getTopRatedPublications();
+        return ResponseEntity.ok(publications);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PublicationDTO> getPublicationDetails(@PathVariable Long id) {
+        PublicationDTO publication = publicationService.getPublicationDetails(id);
+        return ResponseEntity.ok(publication);
+    }
+
 
 
 

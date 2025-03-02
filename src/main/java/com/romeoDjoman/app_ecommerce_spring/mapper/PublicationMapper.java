@@ -6,10 +6,20 @@ import com.romeoDjoman.app_ecommerce_spring.dto.PublicationDTO;
 import com.romeoDjoman.app_ecommerce_spring.entity.Article;
 import com.romeoDjoman.app_ecommerce_spring.entity.Journal;
 import com.romeoDjoman.app_ecommerce_spring.entity.Publication;
+import com.romeoDjoman.app_ecommerce_spring.entity.User;
+import com.romeoDjoman.app_ecommerce_spring.repository.UserRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
+@AllArgsConstructor
 @Component
 public class PublicationMapper {
+
+    @Autowired
+    private UserRepository userRepository;
 
     public Publication toEntity(PublicationDTO dto) {
         if (dto instanceof ArticleDTO) {
@@ -33,6 +43,12 @@ public class PublicationMapper {
         article.setPageCount(dto.getPageCount());
         article.setAvailable(dto.getAvailable());
         article.setRating(dto.getRating());
+        Optional<User> user = userRepository.findById(dto.getAuthorId());
+        if (user.isPresent()){
+            article.setAuthor(user.get());
+        }
+
+
 
         article.setAuthors(dto.getAuthors());
         article.setDoi(dto.getDoi());
@@ -61,6 +77,10 @@ public class PublicationMapper {
         journal.setPageCount(dto.getPageCount());
         journal.setAvailable(dto.getAvailable());
         journal.setRating(dto.getRating());
+        Optional<User> user = userRepository.findById(dto.getAuthorId());
+        if (user.isPresent()){
+            journal.setAuthor(user.get());
+        }
 
         journal.setVolume(dto.getVolume());
         journal.setIssue(dto.getIssue());

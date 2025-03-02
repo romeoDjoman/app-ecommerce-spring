@@ -27,9 +27,9 @@ public class AppEcommerceSpringApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		createUserIfNotExists("admin@gmail.com", "admin", "admin", RoleType.ADMIN);
-		createUserIfNotExists("author@gmail.com", "author", "author", RoleType.AUTHOR);
-		createUserIfNotExists("reviewer@gmail.com", "reviewer", "reviewer", RoleType.REVIEWER);
+		createUserIfNotExists("admin@gmail.com", "Admin", "Admin!password", RoleType.ADMIN);
+		createUserIfNotExists("author@gmail.com", "Author", "Author!password", RoleType.AUTHOR);
+		createUserIfNotExists("reviewer@gmail.com", "Reviewer", "Reviewer!password", RoleType.REVIEWER);
 	}
 
 	private void createUserIfNotExists(String email, String name, String password, RoleType roleType) {

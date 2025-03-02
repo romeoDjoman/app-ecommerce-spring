@@ -10,6 +10,7 @@ import com.romeoDjoman.app_ecommerce_spring.repository.JournalRepository;
 import com.romeoDjoman.app_ecommerce_spring.repository.PublicationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +25,7 @@ public class PublicationService {
     private final JournalRepository journalRepository;
     private final PublicationMapper publicationMapper;
 
-    @Transactional
+
     public PublicationDTO createPublication(PublicationDTO publicationDTO) {
         Publication publication = publicationMapper.toEntity(publicationDTO);
 
@@ -47,4 +48,61 @@ public class PublicationService {
                 .map(publicationMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    public List<PublicationDTO> searchPublicationsByFilters(String category, Double minPrice, Double maxPrice) {
+        Specification<Publication> spec = Specification.where(null);
+
+        if (category != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("category"), category));
+        }
+        if (minPrice != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("price"), minPrice));
+        }
+        if (maxPrice != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("price"), maxPrice));
+        }
+
+        List<Publication> publications = publicationRepository.findAll(spec);
+        return publications.stream()
+                .map(publicationMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<PublicationDTO> getLatestPublications() {
+        List<Publication> publications = publicationRepository.findTop10ByOrderByPublicationDateDesc();
+        return publications.stream()
+                .map(publicationMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<PublicationDTO> getTopSellingPublications() {
+        List<Publication> publications = publicationRepository.findTop10ByOrderBySalesCountDesc();
+        return publications.stream()
+                .map(publicationMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<PublicationDTO> getTopRatedPublications() {
+        List<Publication> publications = publicationRepository.findTop10ByOrderByRatingDesc();
+        return publications.stream()
+                .map(publicationMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public PublicationDTO getPublicationDetails(Long id) {
+        Publication publication = publicationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Publication non trouvée avec l'id: " + id));
+        return publicationMapper.toDto(publication);
+    }
+
+    public void addPublicationToCart(Long userId, Long publicationId) {
+
+    }
+
+    public List<PublicationDTO> getCart(Long userId) {
+        return null;
+    }
+
+
+
 }

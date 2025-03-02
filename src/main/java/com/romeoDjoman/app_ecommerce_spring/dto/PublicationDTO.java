@@ -18,6 +18,7 @@ import java.time.LocalDate;
         @JsonSubTypes.Type(value = ArticleDTO.class, name = "Article"),
         @JsonSubTypes.Type(value = JournalDTO.class, name = "Journal")
 })
+
 @Data
 @DiscriminatorColumn(name = "publication_type", discriminatorType = DiscriminatorType.STRING)
 public class PublicationDTO {
@@ -54,4 +55,23 @@ public class PublicationDTO {
     private Boolean available;
 
     private Double rating;
+
+    private Integer salesCount = 0;
+
+
+    public void incrementSalesCount() {
+        this.salesCount++;
+    }
+
+    private Long authorId;
+
+    // Je dois ajouter à la methode OrderProcess pour incrémenter le nombre de ventes.
+    /*public void processOrder(Order order) {
+        for (OrderItem item : order.getOrderItems()) {
+            Publication publication = item.getPublication(); // Publication vendue
+            publication.incrementSalesCount();  // Incrémente le compteur de ventes
+            publicationRepository.save(publication); // Sauvegarde la publication mise à jour
+        }
+        orderRepository.save(order); // Sauvegarde la commande
+    }*/
 }

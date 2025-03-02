@@ -26,26 +26,27 @@ public class UserService implements UserDetailsService {
     private BCryptPasswordEncoder passwordEncoder;
 
     public void signup(User user) {
-        if (!user.getEmail().contains("@")) {
-            throw new RuntimeException("Votre mail est invalide");
+        if (user.getEmail() == null || !user.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new RuntimeException("L'email est invalide");
         }
-        if (!user.getEmail().contains(".")) {
-            throw new RuntimeException("Votre mail est invalide");
+        if (user.getPwd() == null || user.getPwd().length() < 8) {
+            throw new RuntimeException("Le mot de passe doit contenir au moins 8 caractères");
         }
 
-        Optional<User> userOptional = this.userRepository.findByEmail(user.getEmail());
+        Optional<User> userOptional = userRepository.findByEmail(user.getEmail());
         if (userOptional.isPresent()) {
-            throw new RuntimeException("Votre mail est déjà utilisé");
+            throw new RuntimeException("Cet email est déjà utilisé");
         }
-        String pwdCrypted = this.passwordEncoder.encode(user.getPwd());
+
+        String pwdCrypted = passwordEncoder.encode(user.getPwd());
         user.setPwd(pwdCrypted);
 
         Role roleUser = new Role();
         roleUser.setLabel(RoleType.USER);
         user.setRole(roleUser);
 
-        user = this.userRepository.save(user);
-        this.emailValidationService.save(user);
+        userRepository.save(user);
+        emailValidationService.save(user);
     }
 
     public void activation(Map<String, String> activation) {
@@ -61,9 +62,8 @@ public class UserService implements UserDetailsService {
 
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        return this.userRepository
-                .findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Aucun utilisateur ne correspond à cet identitifant"));
+        return userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
     }
 
     public void changePassword(Map<String, String> parameters) {

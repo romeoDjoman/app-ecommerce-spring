@@ -10,4 +10,10 @@ import java.util.List;
 public interface PublicationRepository extends JpaRepository<Publication, Long>, JpaSpecificationExecutor<Publication> {
 
     List<Publication> findByTitleContainingOrDescriptionContaining(String titleKeyword, String descriptionKeyword);
+
+    List<Publication> findTop10ByOrderByPublicationDateDesc();
+
+    List<Publication> findTop10ByOrderBySalesCountDesc();
+
+    List<Publication> findTop10ByOrderByRatingDesc();
 }

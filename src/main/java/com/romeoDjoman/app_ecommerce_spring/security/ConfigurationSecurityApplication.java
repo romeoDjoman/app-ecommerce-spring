@@ -48,8 +48,28 @@ public class ConfigurationSecurityApplication implements WebMvcConfigurer {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(OPTIONS, "/**").permitAll()
-                        .requestMatchers(POST, "/signup", "/activation", "/login", "/change-password", "/new-password", "/refresh-token", "/reviews").permitAll()
-                        .requestMatchers(GET, "/publications", "/search").permitAll()
+                        .requestMatchers(POST,
+                                "auth/signup",
+                                "auth/activation",
+                                "auth/login",
+                                "/change-password",
+                                "/new-password",
+                                "/refresh-token",
+                                "/reviews",
+
+                                "/cart/add"
+                        ).permitAll()
+                        .requestMatchers(GET,
+                                "/publications",
+                                "/publications/search",
+                                "/publications/filter",
+                                "/publications/top-selling",
+                                "/publications/top-rated",
+                                "publications/publications/{id}",
+
+                                "/cart"
+
+                        ).permitAll()
                         .requestMatchers(GET, "/reviews").hasAnyAuthority("ROLE_AUTHOR", "ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
